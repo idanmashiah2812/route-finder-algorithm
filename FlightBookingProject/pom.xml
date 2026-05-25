@@ -10,17 +10,30 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>AlgorithmModule</artifactId>
+    <artifactId>FlightBookingProject</artifactId>
     <packaging>jar</packaging>
 
-    <name>AlgorithmModule</name>
-    <description>Graph pathfinding algorithm module using Strategy Pattern</description>
+    <name>FlightBookingProject</name>
+    <description>N-Tier flight booking system using Strategy Pattern</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.hit</groupId>
+            <artifactId>AlgorithmModule</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

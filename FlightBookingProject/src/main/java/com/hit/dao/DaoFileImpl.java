@@ -58,7 +58,10 @@ public class DaoFileImpl<T> implements IDao<T> {
 
     private void saveToFile() {
         File file = new File(filePath);
-        file.getParentFile().mkdirs(); // Ensure directory exists
+        File parent = file.getParentFile();
+        if (parent != null) {
+            parent.mkdirs();
+        }
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             oos.writeObject(memoryCache);
