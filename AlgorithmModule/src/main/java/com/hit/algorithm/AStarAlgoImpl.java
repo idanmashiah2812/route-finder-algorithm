@@ -49,10 +49,10 @@ public class AStarAlgoImpl implements IAlgoShortestPath {
             }
         }
 
-        return buildPath(predecessors, destination);
+        return buildPath(predecessors, destination, source);
     }
 
-    private List<String> buildPath(Map<String, String> predecessors, String destination) {
+    private List<String> buildPath(Map<String, String> predecessors, String destination, String source) {
         List<String> path = new LinkedList<>();
         String current = destination;
 
@@ -61,7 +61,7 @@ public class AStarAlgoImpl implements IAlgoShortestPath {
             current = predecessors.get(current);
         }
 
-        if (path.size() == 1 && !path.get(0).equals(destination)) {
+        if (path.size() == 1 && !path.get(0).equals(source)) {
             return Collections.emptyList();
         }
 

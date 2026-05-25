@@ -6,8 +6,8 @@ import java.util.*;
 
 public class DaoFileImpl<T> implements IDao<T> {
 
-    private String filePath;
-    private Map<String, T> memoryCache;
+    private final String filePath;
+    private final Map<String, T> memoryCache;
 
     public DaoFileImpl(String filePath) {
         this.filePath = filePath;

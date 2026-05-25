@@ -1,6 +1,7 @@
 package com.hit.dm;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class FlightTicket implements Serializable {
     private String id;
@@ -55,6 +56,23 @@ public class FlightTicket implements Serializable {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FlightTicket that = (FlightTicket) o;
+        return price == that.price &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(customerName, that.customerName) &&
+                Objects.equals(source, that.source) &&
+                Objects.equals(destination, that.destination);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, customerName, source, destination, price);
     }
 
     @Override

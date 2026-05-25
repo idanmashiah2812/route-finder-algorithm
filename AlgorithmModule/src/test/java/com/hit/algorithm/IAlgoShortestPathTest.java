@@ -58,66 +58,70 @@ public class IAlgoShortestPathTest {
     }
 
     @Test
-    public void testDijkstraShortestPathAF() {
-        List<String> path = dijkstra.findShortestPath(graph, "A", "F");
-        assertNotNull(path);
-        assertFalse(path.isEmpty());
-        assertEquals(Arrays.asList("A", "B", "D", "E", "F"), path);
-    }
-
-    @Test
-    public void testDijkstraShortestPathAD() {
-        List<String> path = dijkstra.findShortestPath(graph, "A", "D");
-        assertNotNull(path);
-        assertFalse(path.isEmpty());
-        assertEquals(Arrays.asList("A", "B", "D"), path);
-    }
-
-    @Test
-    public void testDijkstraSourceEqualsDestination() {
-        List<String> path = dijkstra.findShortestPath(graph, "A", "A");
-        assertNotNull(path);
-        assertEquals(Collections.singletonList("A"), path);
-    }
-
-    @Test
-    public void testDijkstraDisconnectedNode() {
-        Map<String, Map<String, Integer>> disconnectedGraph = new LinkedHashMap<>();
-        disconnectedGraph.put("A", new LinkedHashMap<>());
-        disconnectedGraph.put("B", new LinkedHashMap<>());
-
-        List<String> path = dijkstra.findShortestPath(disconnectedGraph, "A", "B");
-        assertNotNull(path);
-        assertTrue(path.isEmpty());
-    }
-
-    @Test
-    public void testAStarShortestPathAF() {
-        List<String> path = aStar.findShortestPath(graph, "A", "F");
-        assertNotNull(path);
-        assertFalse(path.isEmpty());
-        assertEquals(Arrays.asList("A", "B", "D", "E", "F"), path);
-    }
-
-    @Test
-    public void testAStarShortestPathAD() {
-        List<String> path = aStar.findShortestPath(graph, "A", "D");
-        assertNotNull(path);
-        assertFalse(path.isEmpty());
-        assertEquals(Arrays.asList("A", "B", "D"), path);
-    }
-
-    @Test
-    public void testAStarSourceEqualsDestination() {
-        List<String> path = aStar.findShortestPath(graph, "A", "A");
-        assertNotNull(path);
-        assertEquals(Collections.singletonList("A"), path);
-    }
-
-    @Test
-    public void testBothAlgorithmsProduceSameResult() {
+    public void testHappyPath() {
         List<String> dijkstraPath = dijkstra.findShortestPath(graph, "A", "F");
+        assertEquals(Arrays.asList("A", "C", "B", "D", "E", "F"), dijkstraPath);
+
         List<String> aStarPath = aStar.findShortestPath(graph, "A", "F");
-        assertEquals(dijkstraPath, aStarPath);
+        assertEquals(Arrays.asList("A", "C", "B", "D", "E", "F"), aStarPath);
+    }
+
+    @Test
+    public void testNoPathAvailable() {
+        List<String> dijkstraPath = dijkstra.findShortestPath(emptyGraph("X", "Y"), "X", "Y");
+        assertTrue(dijkstraPath.isEmpty());
+
+        List<String> aStarPath = aStar.findShortestPath(emptyGraph("X", "Y"), "X", "Y");
+        assertTrue(aStarPath.isEmpty());
+    }
+
+    @Test
+    public void testSameSourceAndDestination() {
+        List<String> dijkstraPath = dijkstra.findShortestPath(graph, "A", "A");
+        assertEquals(Collections.singletonList("A"), dijkstraPath);
+
+        List<String> aStarPath = aStar.findShortestPath(graph, "A", "A");
+        assertEquals(Collections.singletonList("A"), aStarPath);
+    }
+
+    @Test
+    public void testHeuristicImpactOnAStar() {
+        Map<String, Map<String, Integer>> branchingGraph = new LinkedHashMap<>();
+
+        Map<String, Integer> sEdges = new LinkedHashMap<>();
+        sEdges.put("A", 1);
+        sEdges.put("B", 5);
+        branchingGraph.put("S", sEdges);
+
+        Map<String, Integer> aEdges = new LinkedHashMap<>();
+        aEdges.put("T", 10);
+        branchingGraph.put("A", aEdges);
+
+        Map<String, Integer> bEdges = new LinkedHashMap<>();
+        bEdges.put("T", 2);
+        branchingGraph.put("B", bEdges);
+
+        branchingGraph.put("T", new LinkedHashMap<>());
+
+        Map<String, Integer> misleadingHeuristic = new LinkedHashMap<>();
+        misleadingHeuristic.put("S", 10);
+        misleadingHeuristic.put("A", 100);
+        misleadingHeuristic.put("B", 1);
+        misleadingHeuristic.put("T", 0);
+
+        IAlgoShortestPath aStarMisleading = new AStarAlgoImpl(misleadingHeuristic);
+
+        List<String> dijkstraPath = dijkstra.findShortestPath(branchingGraph, "S", "T");
+        List<String> aStarPath = aStarMisleading.findShortestPath(branchingGraph, "S", "T");
+
+        assertEquals(Arrays.asList("S", "B", "T"), dijkstraPath);
+        assertEquals(Arrays.asList("S", "B", "T"), aStarPath);
+    }
+
+    private static Map<String, Map<String, Integer>> emptyGraph(String nodeA, String nodeB) {
+        Map<String, Map<String, Integer>> g = new LinkedHashMap<>();
+        g.put(nodeA, new LinkedHashMap<>());
+        g.put(nodeB, new LinkedHashMap<>());
+        return g;
     }
 }
