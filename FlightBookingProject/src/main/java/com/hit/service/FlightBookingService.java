@@ -32,4 +32,8 @@ public class FlightBookingService {
     public List<String> getOptimalRoute(Map<String, Map<String, Integer>> graph, String from, String to) {
         return shortestPathAlgo.findShortestPath(graph, from, to);
     }
+
+    public List<FlightTicket> getAllTickets() {
+        return dao.findAll();
+    }
 }

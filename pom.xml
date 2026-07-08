@@ -9,11 +9,12 @@
     <packaging>pom</packaging>
 
     <name>RouteFinderAlgorithm</name>
-    <description>Multi-module project: AlgorithmModule + FlightBookingProject</description>
+    <description>Multi-module project: AlgorithmModule + FlightBookingProject + CommunicationLayer</description>
 
     <modules>
         <module>AlgorithmModule</module>
         <module>FlightBookingProject</module>
+        <module>CommunicationLayer</module>
     </modules>
 
     <properties>

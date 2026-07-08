@@ -10,8 +10,11 @@ public class DijkstraAlgoImpl implements IAlgoShortestPath {
         Map<String, String> predecessors = new HashMap<>();
         Set<String> visited = new HashSet<>();
 
-        for (String vertex : graph.keySet()) {
-            distances.put(vertex, Integer.MAX_VALUE);
+        for (Map.Entry<String, Map<String, Integer>> entry : graph.entrySet()) {
+            distances.put(entry.getKey(), Integer.MAX_VALUE);
+            for (String neighbor : entry.getValue().keySet()) {
+                distances.putIfAbsent(neighbor, Integer.MAX_VALUE);
+            }
         }
         distances.put(source, 0);
 

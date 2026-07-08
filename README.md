@@ -1,6 +1,6 @@
 # Route Finder Algorithm — Flight Booking System
 
-**Students:** Student 1, Student 2
+**Students:** Idan Mashiah and Alon Iozef
 
 A multi-module Java project implementing graph pathfinding algorithms and an N-Tier flight booking system using the Strategy Pattern and SOLID principles.
 

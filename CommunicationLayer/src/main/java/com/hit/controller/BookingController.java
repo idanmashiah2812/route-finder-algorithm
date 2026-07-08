@@ -1,0 +1,52 @@
+package com.hit.controller;
+
+import com.google.gson.JsonObject;
+import com.hit.dm.FlightTicket;
+import com.hit.server.Request;
+import com.hit.server.Response;
+import com.hit.service.FlightBookingService;
+
+public class BookingController implements Controller {
+
+    private final FlightBookingService flightBookingService;
+
+    public BookingController(FlightBookingService flightBookingService) {
+        this.flightBookingService = flightBookingService;
+    }
+
+    @Override
+    public Response<?> handle(Request<?> request) {
+        String action = request.getHeaders().get("action");
+        String subAction = action.contains("/") ? action.split("/", 2)[1] : "";
+
+        switch (subAction) {
+            case "create": {
+                JsonObject body = (JsonObject) request.getBody();
+                if (body == null || !body.has("id") || !body.has("customerName")
+                        || !body.has("source") || !body.has("destination") || !body.has("price")) {
+                    return new Response<>(400, "Missing required ticket fields", null);
+                }
+                FlightTicket ticket = new FlightTicket(
+                        body.get("id").getAsString(),
+                        body.get("customerName").getAsString(),
+                        body.get("source").getAsString(),
+                        body.get("destination").getAsString(),
+                        body.get("price").getAsInt()
+                );
+                flightBookingService.bookFlight(ticket);
+                return new Response<>(201, "Booking created", ticket);
+            }
+            case "cancel": {
+                JsonObject body = (JsonObject) request.getBody();
+                String id = body != null ? body.get("id").getAsString() : null;
+                if (id == null || id.isEmpty()) {
+                    return new Response<>(400, "Missing booking id", null);
+                }
+                flightBookingService.cancelFlight(id);
+                return new Response<>(200, "Booking cancelled", null);
+            }
+            default:
+                return new Response<>(404, "Unknown booking action: " + action, null);
+        }
+    }
+}

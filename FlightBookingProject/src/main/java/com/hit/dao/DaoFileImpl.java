@@ -33,6 +33,11 @@ public class DaoFileImpl<T> implements IDao<T> {
     }
 
     @Override
+    public List<T> findAll() {
+        return new ArrayList<>(memoryCache.values());
+    }
+
+    @Override
     public void delete(String id) {
         memoryCache.remove(id);
         saveToFile();
