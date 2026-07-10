@@ -20,38 +20,42 @@ public class UserController implements Controller {
         String subAction = action.contains("/") ? action.split("/", 2)[1] : "";
 
         switch (subAction) {
-            case "register": {
-                JsonObject body = (JsonObject) request.getBody();
-                if (body == null || !body.has("username") || !body.has("password")) {
-                    return new Response<>(400, "Missing username or password", null);
-                }
-                String username = body.get("username").getAsString();
-                String password = body.get("password").getAsString();
-                String role = body.has("role") ? body.get("role").getAsString() : "USER";
-
-                User user = userService.register(username, password, role);
-                if (user == null) {
-                    return new Response<>(409, "Username already exists: " + username, null);
-                }
-                return new Response<>(201, "User registered", sanitizeUser(user));
-            }
-            case "login": {
-                JsonObject body = (JsonObject) request.getBody();
-                if (body == null || !body.has("username") || !body.has("password")) {
-                    return new Response<>(400, "Missing username or password", null);
-                }
-                String username = body.get("username").getAsString();
-                String password = body.get("password").getAsString();
-
-                User user = userService.login(username, password);
-                if (user == null) {
-                    return new Response<>(401, "Invalid username or password", null);
-                }
-                return new Response<>(200, "Login successful", sanitizeUser(user));
-            }
+            case "register":
+                return handleRegister((JsonObject) request.getBody());
+            case "login":
+                return handleLogin((JsonObject) request.getBody());
             default:
                 return new Response<>(404, "Unknown user action: " + action, null);
         }
+    }
+
+    public Response<?> handleRegister(JsonObject body) {
+        if (body == null || !body.has("username") || !body.has("password")) {
+            return new Response<>(400, "Missing username or password", null);
+        }
+        String username = body.get("username").getAsString();
+        String password = body.get("password").getAsString();
+        String role = body.has("role") ? body.get("role").getAsString() : "USER";
+
+        User user = userService.register(username, password, role);
+        if (user == null) {
+            return new Response<>(409, "Username already exists: " + username, null);
+        }
+        return new Response<>(201, "User registered", sanitizeUser(user));
+    }
+
+    public Response<?> handleLogin(JsonObject body) {
+        if (body == null || !body.has("username") || !body.has("password")) {
+            return new Response<>(400, "Missing username or password", null);
+        }
+        String username = body.get("username").getAsString();
+        String password = body.get("password").getAsString();
+
+        User user = userService.login(username, password);
+        if (user == null) {
+            return new Response<>(401, "Invalid username or password", null);
+        }
+        return new Response<>(200, "Login successful", sanitizeUser(user));
     }
 
     private User sanitizeUser(User user) {

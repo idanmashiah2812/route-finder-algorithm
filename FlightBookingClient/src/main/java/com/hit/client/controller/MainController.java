@@ -26,8 +26,8 @@ public class MainController implements Initializable {
     @FXML private Label statFlights;
 
     // Navigation
-    @FXML private VBox dashboardView, flightView, routeView, bookingView;
-    @FXML private Button navDashboard, navFlights, navRoute, navBooking;
+    @FXML private VBox dashboardView, flightView, routeView, bookingView, userView;
+    @FXML private Button navDashboard, navFlights, navRoute, navBooking, navUser;
 
     // Flight search
     @FXML private TextField searchIdField;
@@ -43,6 +43,13 @@ public class MainController implements Initializable {
     @FXML private TextField bookId, bookCustomer, bookSource, bookDest, bookPrice;
     @FXML private TextField cancelId;
     @FXML private TextArea bookingResultArea;
+
+    // User account
+    @FXML private TextField regUsername, regPassword, regRole;
+    @FXML private TextField loginUsername, loginPassword;
+    @FXML private TextArea userResultArea;
+    @FXML private Label userStatusLabel;
+
     @FXML private ProgressBar progressBar;
 
     private final ServerClient client = new ServerClient();
@@ -68,9 +75,10 @@ public class MainController implements Initializable {
     @FXML private void onFlightSearch() { showView(flightView, navFlights); }
     @FXML private void onRoutePlanner() { showView(routeView, navRoute); }
     @FXML private void onBookings() { showView(bookingView, navBooking); }
+    @FXML private void onUserAccount() { showView(userView, navUser); }
 
     private void showView(VBox view, Button btn) {
-        List.of(dashboardView, flightView, routeView, bookingView).forEach(v -> {
+        List.of(dashboardView, flightView, routeView, bookingView, userView).forEach(v -> {
             v.setVisible(false);
             v.setManaged(false);
         });
@@ -80,7 +88,7 @@ public class MainController implements Initializable {
     }
 
     private void selectNav(Button selected) {
-        List.of(navDashboard, navFlights, navRoute, navBooking).forEach(b -> b.getStyleClass().remove("selected"));
+        List.of(navDashboard, navFlights, navRoute, navBooking, navUser).forEach(b -> b.getStyleClass().remove("selected"));
         selected.getStyleClass().add("selected");
     }
 
@@ -233,6 +241,64 @@ public class MainController implements Initializable {
         sendRequest(client.getBookingPort(), req, bookingResultArea, result -> {
             cancelId.clear();
             onRefreshFlights();
+        });
+    }
+
+    // ===== User Account =====
+
+    @FXML private void onRegister() {
+        String username = regUsername.getText().trim();
+        String password = regPassword.getText().trim();
+        String role = regRole.getText().trim();
+        if (username.isEmpty() || password.isEmpty()) {
+            userResultArea.setText("Please enter username and password.");
+            return;
+        }
+        if (role.isEmpty()) role = "USER";
+
+        JsonObject body = new JsonObject();
+        body.addProperty("username", username);
+        body.addProperty("password", password);
+        body.addProperty("role", role);
+
+        JsonObject req = new JsonObject();
+        JsonObject headers = new JsonObject();
+        headers.addProperty("action", "user/register");
+        req.add("headers", headers);
+        req.add("body", body);
+
+        sendRequest(client.getUserPort(), req, userResultArea, result -> {
+            Platform.runLater(() -> {
+                regUsername.clear();
+                regPassword.clear();
+                regRole.clear();
+            });
+        });
+    }
+
+    @FXML private void onLogin() {
+        String username = loginUsername.getText().trim();
+        String password = loginPassword.getText().trim();
+        if (username.isEmpty() || password.isEmpty()) {
+            userResultArea.setText("Please enter username and password.");
+            return;
+        }
+
+        JsonObject body = new JsonObject();
+        body.addProperty("username", username);
+        body.addProperty("password", password);
+
+        JsonObject req = new JsonObject();
+        JsonObject headers = new JsonObject();
+        headers.addProperty("action", "user/login");
+        req.add("headers", headers);
+        req.add("body", body);
+
+        sendRequest(client.getUserPort(), req, userResultArea, result -> {
+            Platform.runLater(() -> {
+                loginUsername.clear();
+                loginPassword.clear();
+            });
         });
     }
 

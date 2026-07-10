@@ -22,35 +22,42 @@ public class FlightController implements Controller {
         String subAction = action.contains("/") ? action.split("/", 2)[1] : "";
 
         switch (subAction) {
-            case "getall": {
-                return new Response<>(200, "All tickets", flightBookingService.getAllTickets());
-            }
-            case "get": {
-                JsonObject body = (JsonObject) request.getBody();
-                String id = body != null ? body.get("id").getAsString() : null;
-                if (id == null || id.isEmpty()) {
-                    return new Response<>(400, "Missing ticket id", null);
-                }
-                Object ticket = flightBookingService.getTicket(id);
-                if (ticket == null) {
-                    return new Response<>(404, "Ticket not found: " + id, null);
-                }
-                return new Response<>(200, "Ticket found", ticket);
-            }
-            case "route": {
-                JsonObject body = (JsonObject) request.getBody();
-                if (body == null || !body.has("graph") || !body.has("from") || !body.has("to")) {
-                    return new Response<>(400, "Missing graph, from, or to in body", null);
-                }
-                Map<String, Map<String, Integer>> graph = gsonToGraph(body.getAsJsonObject("graph"));
-                String from = body.get("from").getAsString();
-                String to = body.get("to").getAsString();
-                List<String> route = flightBookingService.getOptimalRoute(graph, from, to);
-                return new Response<>(200, "Route calculated", route);
-            }
+            case "getall":
+                return handleGetAll();
+            case "get":
+                return handleGet((JsonObject) request.getBody());
+            case "route":
+                return handleRoute((JsonObject) request.getBody());
             default:
                 return new Response<>(404, "Unknown flight action: " + action, null);
         }
+    }
+
+    public Response<?> handleGetAll() {
+        return new Response<>(200, "All tickets", flightBookingService.getAllTickets());
+    }
+
+    public Response<?> handleGet(JsonObject body) {
+        String id = body != null ? body.get("id").getAsString() : null;
+        if (id == null || id.isEmpty()) {
+            return new Response<>(400, "Missing ticket id", null);
+        }
+        Object ticket = flightBookingService.getTicket(id);
+        if (ticket == null) {
+            return new Response<>(404, "Ticket not found: " + id, null);
+        }
+        return new Response<>(200, "Ticket found", ticket);
+    }
+
+    public Response<?> handleRoute(JsonObject body) {
+        if (body == null || !body.has("graph") || !body.has("from") || !body.has("to")) {
+            return new Response<>(400, "Missing graph, from, or to in body", null);
+        }
+        Map<String, Map<String, Integer>> graph = gsonToGraph(body.getAsJsonObject("graph"));
+        String from = body.get("from").getAsString();
+        String to = body.get("to").getAsString();
+        List<String> route = flightBookingService.getOptimalRoute(graph, from, to);
+        return new Response<>(200, "Route calculated", route);
     }
 
     private Map<String, Map<String, Integer>> gsonToGraph(JsonObject jsonGraph) {

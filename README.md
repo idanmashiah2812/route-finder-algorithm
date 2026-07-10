@@ -54,7 +54,7 @@ RouteFinderAlgorithm/
 │   │   ├── dm/FlightTicket.java          # Flight ticket domain model
 │   │   ├── dm/User.java                  # User domain model
 │   │   ├── service/FlightBookingService.java  # Booking business logic
-│   │   └── service/UserService.java      # User auth (in-memory)
+│   │   └── service/UserService.java      # User auth (DAO-backed)
 │   └── src/test/java/.../
 │       ├── dao/DaoFileImplTest.java
 │       └── service/{FlightBookingServiceTest, FlightBookingServiceUnitTest, FlightBookingSystemE2ETest}.java
@@ -104,7 +104,7 @@ RouteFinderAlgorithm/
 mvn clean install
 ```
 
-This builds and tests all modules: `AlgorithmModule`, `FlightBookingProject`, `CommunicationLayer` with **15 tests** (4 algorithm, 11 service/DAO).
+This builds and tests all modules: `AlgorithmModule`, `FlightBookingProject`, `CommunicationLayer` with **17 tests** (4 algorithm, 13 service/DAO).
 
 ---
 
@@ -206,6 +206,10 @@ java com.hit.client.Client localhost 3001 "{\"headers\":{\"action\":\"flight/get
 | 4 | Duplicate booking silently overwrites existing ticket | `BookingController.java` | Returns `409 Conflict` if ticket ID already exists |
 | 5 | User password exposed in API responses | `UserController.java` | `sanitizeUser()` strips password before returning user data |
 | 6 | Hardcoded data source path fails from different CWD | `ControllerFactory.java` | `resolveDataSourcePath()` tries multiple candidates; configurable via `-Ddatasource.path` |
+| 7 | UserService uses in-memory storage only (no persistence) | `UserService.java` | Added `IDao<User>` + `IAlgoShortestPath` refs; users persist to file via DaoFileImpl |
+| 8 | Controllers lack explicit API methods | `FlightController.java`, `BookingController.java`, `UserController.java` | Added public API methods (e.g., `handleGetAll()`, `handleCreate()`, `handleRegister()`) |
+| 9 | GUI missing user account functionality | `MainController.java`, `main.fxml` | Added register/login views and handlers; wired to UserServer (port 3003) |
+| 10 | No test for UserService | `UserServiceTest.java` | 6 new tests covering register, login, duplicate, wrong password, delete, persistence |
 
 ---
 

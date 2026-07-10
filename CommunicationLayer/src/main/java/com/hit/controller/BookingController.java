@@ -20,37 +20,41 @@ public class BookingController implements Controller {
         String subAction = action.contains("/") ? action.split("/", 2)[1] : "";
 
         switch (subAction) {
-            case "create": {
-                JsonObject body = (JsonObject) request.getBody();
-                if (body == null || !body.has("id") || !body.has("customerName")
-                        || !body.has("source") || !body.has("destination") || !body.has("price")) {
-                    return new Response<>(400, "Missing required ticket fields", null);
-                }
-                String id = body.get("id").getAsString();
-                if (flightBookingService.getTicket(id) != null) {
-                    return new Response<>(409, "Ticket already exists: " + id, null);
-                }
-                FlightTicket ticket = new FlightTicket(
-                        id,
-                        body.get("customerName").getAsString(),
-                        body.get("source").getAsString(),
-                        body.get("destination").getAsString(),
-                        body.get("price").getAsInt()
-                );
-                flightBookingService.bookFlight(ticket);
-                return new Response<>(201, "Booking created", ticket);
-            }
-            case "cancel": {
-                JsonObject body = (JsonObject) request.getBody();
-                String id = body != null ? body.get("id").getAsString() : null;
-                if (id == null || id.isEmpty()) {
-                    return new Response<>(400, "Missing booking id", null);
-                }
-                flightBookingService.cancelFlight(id);
-                return new Response<>(200, "Booking cancelled", null);
-            }
+            case "create":
+                return handleCreate((JsonObject) request.getBody());
+            case "cancel":
+                return handleCancel((JsonObject) request.getBody());
             default:
                 return new Response<>(404, "Unknown booking action: " + action, null);
         }
+    }
+
+    public Response<?> handleCreate(JsonObject body) {
+        if (body == null || !body.has("id") || !body.has("customerName")
+                || !body.has("source") || !body.has("destination") || !body.has("price")) {
+            return new Response<>(400, "Missing required ticket fields", null);
+        }
+        String id = body.get("id").getAsString();
+        if (flightBookingService.getTicket(id) != null) {
+            return new Response<>(409, "Ticket already exists: " + id, null);
+        }
+        FlightTicket ticket = new FlightTicket(
+                id,
+                body.get("customerName").getAsString(),
+                body.get("source").getAsString(),
+                body.get("destination").getAsString(),
+                body.get("price").getAsInt()
+        );
+        flightBookingService.bookFlight(ticket);
+        return new Response<>(201, "Booking created", ticket);
+    }
+
+    public Response<?> handleCancel(JsonObject body) {
+        String id = body != null ? body.get("id").getAsString() : null;
+        if (id == null || id.isEmpty()) {
+            return new Response<>(400, "Missing booking id", null);
+        }
+        flightBookingService.cancelFlight(id);
+        return new Response<>(200, "Booking cancelled", null);
     }
 }

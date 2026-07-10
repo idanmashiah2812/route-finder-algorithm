@@ -20,6 +20,7 @@
             <Button fx:id="navFlights" styleClass="nav-button" text="   Flight Search" onAction="#onFlightSearch" />
             <Button fx:id="navRoute" styleClass="nav-button" text="   Route Planner" onAction="#onRoutePlanner" />
             <Button fx:id="navBooking" styleClass="nav-button" text="   My Bookings" onAction="#onBookings" />
+            <Button fx:id="navUser" styleClass="nav-button" text="   User Account" onAction="#onUserAccount" />
         </VBox>
     </left>
 
@@ -157,6 +158,42 @@
                     <TextArea fx:id="bookingResultArea" styleClass="result-area" prefHeight="80" editable="false" promptText="Booking results will appear here..." />
 
                     <ProgressBar fx:id="progressBar" prefWidth="400" visible="false" />
+                </VBox>
+
+                <!-- ===== 5. USER ACCOUNT ===== -->
+                <VBox fx:id="userView" managed="false" visible="false" spacing="15">
+                    <Text styleClass="section-title" text="User Account" />
+                    <Text styleClass="section-subtitle" text="Register a new account or log in to an existing one." />
+
+                    <HBox spacing="30">
+                        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS">
+                            <Label styleClass="card-title" text="Register" />
+                            <GridPane hgap="15" vgap="8">
+                                <columnConstraints><ColumnConstraints minWidth="120" /><ColumnConstraints minWidth="200" /></columnConstraints>
+                                <Label text="Username:" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                <TextField fx:id="regUsername" promptText="Choose a username" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                <Label text="Password:" styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                <TextField fx:id="regPassword" promptText="Choose a password" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                                <Label text="Role:" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                                <TextField fx:id="regRole" promptText="USER or ADMIN" text="USER" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                            </GridPane>
+                            <Button text="Register" styleClass="btn-primary" onAction="#onRegister" />
+                        </VBox>
+
+                        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS">
+                            <Label styleClass="card-title" text="Login" />
+                            <GridPane hgap="15" vgap="8">
+                                <columnConstraints><ColumnConstraints minWidth="120" /><ColumnConstraints minWidth="200" /></columnConstraints>
+                                <Label text="Username:" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                <TextField fx:id="loginUsername" promptText="Your username" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                <Label text="Password:" styleClass="form-label" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                <TextField fx:id="loginPassword" promptText="Your password" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                            </GridPane>
+                            <Button text="Login" styleClass="btn-success" onAction="#onLogin" />
+                        </VBox>
+                    </HBox>
+
+                    <TextArea fx:id="userResultArea" styleClass="result-area" prefHeight="80" editable="false" promptText="User account results will appear here..." />
                 </VBox>
 
             </StackPane>
