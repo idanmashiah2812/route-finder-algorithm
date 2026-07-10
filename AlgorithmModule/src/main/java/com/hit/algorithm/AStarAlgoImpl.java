@@ -39,7 +39,9 @@ public class AStarAlgoImpl implements IAlgoShortestPath {
             for (Map.Entry<String, Integer> neighbor : neighbors.entrySet()) {
                 String next = neighbor.getKey();
                 int weight = neighbor.getValue();
-                int tentativeG = gScore.get(current) + weight;
+                int currentG = gScore.get(current);
+                if (currentG == Integer.MAX_VALUE) continue;
+                int tentativeG = currentG + weight;
 
                 if (tentativeG < gScore.get(next)) {
                     gScore.put(next, tentativeG);

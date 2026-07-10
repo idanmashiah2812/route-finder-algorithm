@@ -2,9 +2,9 @@ package com.hit.service;
 
 import com.hit.dm.User;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserService {
 
@@ -12,8 +12,8 @@ public class UserService {
     private final Map<String, User> usersByUsername;
 
     public UserService() {
-        this.usersById = new HashMap<>();
-        this.usersByUsername = new HashMap<>();
+        this.usersById = new ConcurrentHashMap<>();
+        this.usersByUsername = new ConcurrentHashMap<>();
     }
 
     public User register(String username, String password, String role) {

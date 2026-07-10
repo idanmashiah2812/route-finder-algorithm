@@ -33,7 +33,7 @@ public class UserController implements Controller {
                 if (user == null) {
                     return new Response<>(409, "Username already exists: " + username, null);
                 }
-                return new Response<>(201, "User registered", user);
+                return new Response<>(201, "User registered", sanitizeUser(user));
             }
             case "login": {
                 JsonObject body = (JsonObject) request.getBody();
@@ -47,10 +47,14 @@ public class UserController implements Controller {
                 if (user == null) {
                     return new Response<>(401, "Invalid username or password", null);
                 }
-                return new Response<>(200, "Login successful", user);
+                return new Response<>(200, "Login successful", sanitizeUser(user));
             }
             default:
                 return new Response<>(404, "Unknown user action: " + action, null);
         }
+    }
+
+    private User sanitizeUser(User user) {
+        return new User(user.getId(), user.getUsername(), null, user.getRole());
     }
 }

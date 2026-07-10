@@ -1,5 +1,20 @@
+### Maven ###
+target/
+*.jar
+*.war
+*.ear
+*.log
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
 ### IntelliJ IDEA ###
 out/
+.idea/
+*.iml
+*.iws
+*.ipr
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
@@ -25,6 +40,16 @@ bin/
 
 ### VS Code ###
 .vscode/
+*.code-workspace
 
 ### Mac OS ###
 .DS_Store
+
+### Windows ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+### Demo data files ###
+demo_datasource.txt
+demo_service.txt

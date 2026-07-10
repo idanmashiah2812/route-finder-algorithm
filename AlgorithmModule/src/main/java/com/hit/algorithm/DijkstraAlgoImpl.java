@@ -34,7 +34,9 @@ public class DijkstraAlgoImpl implements IAlgoShortestPath {
             for (Map.Entry<String, Integer> neighbor : neighbors.entrySet()) {
                 String next = neighbor.getKey();
                 int weight = neighbor.getValue();
-                int newDist = distances.get(current) + weight;
+                int currentDist = distances.get(current);
+                if (currentDist == Integer.MAX_VALUE) continue;
+                int newDist = currentDist + weight;
 
                 if (newDist < distances.get(next)) {
                     distances.put(next, newDist);

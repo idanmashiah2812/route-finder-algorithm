@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class ControllerFactory {
 
-    private static final String DATA_SOURCE = "src/main/resources/datasource.txt";
+    private static final String DEFAULT_DATA_SOURCE = "src/main/resources/datasource.txt";
     private final Map<String, Controller> controllers;
 
     public ControllerFactory() {
@@ -25,8 +25,27 @@ public class ControllerFactory {
         initializeControllers();
     }
 
+    private String resolveDataSourcePath() {
+        String path = System.getProperty("datasource.path");
+        if (path != null) return path;
+
+        // Try common relative paths from various working directories
+        String[] candidates = {
+            DEFAULT_DATA_SOURCE,
+            "../" + DEFAULT_DATA_SOURCE,
+            "CommunicationLayer/" + DEFAULT_DATA_SOURCE,
+            "../CommunicationLayer/" + DEFAULT_DATA_SOURCE
+        };
+        for (String candidate : candidates) {
+            if (new java.io.File(candidate).exists()) {
+                return candidate;
+            }
+        }
+        return DEFAULT_DATA_SOURCE;
+    }
+
     private void initializeControllers() {
-        IDao<FlightTicket> dao = new DaoFileImpl<>(DATA_SOURCE);
+        IDao<FlightTicket> dao = new DaoFileImpl<>(resolveDataSourcePath());
         IAlgoShortestPath algo = new DijkstraAlgoImpl();
         FlightBookingService flightBookingService = new FlightBookingService(dao, algo);
         UserService userService = new UserService();

@@ -26,8 +26,12 @@ public class BookingController implements Controller {
                         || !body.has("source") || !body.has("destination") || !body.has("price")) {
                     return new Response<>(400, "Missing required ticket fields", null);
                 }
+                String id = body.get("id").getAsString();
+                if (flightBookingService.getTicket(id) != null) {
+                    return new Response<>(409, "Ticket already exists: " + id, null);
+                }
                 FlightTicket ticket = new FlightTicket(
-                        body.get("id").getAsString(),
+                        id,
                         body.get("customerName").getAsString(),
                         body.get("source").getAsString(),
                         body.get("destination").getAsString(),
